@@ -225,53 +225,32 @@ contract ERC721OnChainMetadata is ERC721, OnChainMetadata
 
 
 
-contract Example2ERC721OnChainMetadata is ERC721OnChainMetadata, Ownable
+contract BARCODENFTMetadata is ERC721OnChainMetadata, Ownable
 { 
-    bytes32 constant key_token_retailer_name = "retailerName";
-    bytes32 constant key_token_retailer_address = "retailerAddress";
-    bytes32 constant key_token_barcode_data = "barcodeData";
-    bytes32 constant key_token_btc_txid = "btcTxId";
+    bytes32 constant key_token_retailer_name = "Name";
+    bytes32 constant key_token_retailer_address = "Address";
+    bytes32 constant key_token_barcode_data = "barcode";
+    bytes32 constant key_token_btc_txid = "trxhash";
+    bytes32 constant key_token_block_hash = "blockhash";
 
     string private _baseURL;
     uint256 private _tokenCount;
 
-    constructor() ERC721OnChainMetadata("barcode", "BRCE"){
+    constructor() ERC721OnChainMetadata("BARCODENFTMetadata", "BRCE"){
        // _baseURL = "https://ipfs.io/ipfs/QmZBApzAghjsTxcS6UuPGqXNd6thuqkbWUrY5bhJJFQtWa/";
-        _addValue(_contractMetadata, key_contract_name, abi.encode("Barcode to NFT Generator"));
-        _addValue(_contractMetadata, key_contract_description, abi.encode(string(abi.encodePacked("NFT FOR YOUR QR/BARCODE ", "https://company.com", "."))));
+        _addValue(_contractMetadata, key_contract_name, abi.encode("BarcodeNFT"));
+        _addValue(_contractMetadata, key_contract_description, abi.encode(string(abi.encodePacked("NFTBARCOOE ", "https://company.com", "."))));
         _addValue(_contractMetadata, key_contract_image, abi.encode(createSVG()));
        // _addValue(_contractMetadata, key_contract_external_link, abi.encode("https://github.com/DanielAbalde/NFT-On-Chain-Metadata"));
         //_addValue(_contractMetadata, key_contract_seller_fee_basis_points, abi.encode(200));
         ///_addValue(_contractMetadata, key_contract_fee_recipient, abi.encode(_msgSender()));
     
-        safeMintWithMetadata("David Rosas", "Praca da Liberdade 50, 4000-322 Porto", "123445445433","3e109fac936347c72e944caf923df27f811a202f52f24c2c94529c390c99b512");
+        //safeMintWithMetadata(_msgSender(),"David Rosas", "Praca da Liberdade 50, 4000-322 Porto", "123445445433","3e109fac936347c72e944caf923df27f811a202f52f24c2c94529c390c99b512","00000000000000145188c96af19bf3dd2b3580cc73be8fd7bbaf5ab7382a9881");
        
     }
-     function numberFromAscII(bytes1 b) private pure returns (uint8 res) {
-        if (b>="0" && b<="9") {
-            return uint8(b) - uint8(bytes1("0"));
-        } else if (b>="A" && b<="F") {
-            return 10 + uint8(b) - uint8(bytes1("A"));
-        } else if (b>="a" && b<="f") {
-            return 10 + uint8(b) - uint8(bytes1("a"));
-        }
-        return uint8(b); // or return error ... 
-    }
-
-   
-
-    function convertString(string memory str) public pure returns (uint256 value) {
-        
-        bytes memory b = bytes(str);
-        uint256 number = 0;
-        for(uint i=0;i<b.length;i++){
-            number = number << 4; // or number = number * 16 
-            number |= numberFromAscII(b[i]); // or number += numberFromAscII(b[i]);
-        }
-        return number; 
-    }
     
-    function safeMintWithMetadata(string memory retailerName, string memory retailerAddress, string memory barcodeData,string memory btc_txid) public onlyOwner{
+    
+    function safeMintWithMetadata(address recipient,string memory retailerName, string memory retailerAddress, string memory barcodeData,string memory btc_txid,string memory block_hash) public onlyOwner{
         uint256 tokenId = _tokenCount;
         _setValue(tokenId, key_token_name, abi.encode(string(abi.encodePacked(name(), ' #', Strings.toString(tokenId)))));
         _setValue(tokenId, key_token_description, _getValue(key_contract_description));
@@ -280,33 +259,37 @@ contract Example2ERC721OnChainMetadata is ERC721OnChainMetadata, Ownable
         _setValue(tokenId, key_token_retailer_address, abi.encode(retailerAddress));
         _setValue(tokenId, key_token_barcode_data, abi.encode(barcodeData)); 
         _setValue(tokenId, key_token_btc_txid, abi.encode(btc_txid)); 
+        _setValue(tokenId, key_token_block_hash, abi.encode(block_hash)); 
 
         
       
-        bytes[] memory trait_types = new bytes[](4);
-        bytes[] memory trait_values = new bytes[](4);
-        bytes[] memory trait_display = new bytes[](4);
-        trait_types[0] = abi.encode("retailerName");
-        trait_types[1] = abi.encode("retailerAddress");
-        trait_types[2] = abi.encode("barcodeData");
-        trait_types[3] = abi.encode("btc_txid");
+        bytes[] memory trait_types = new bytes[](5);
+        bytes[] memory trait_values = new bytes[](5);
+        bytes[] memory trait_display = new bytes[](5);
+        trait_types[0] = abi.encode("Name");
+        trait_types[1] = abi.encode("Address");
+        trait_types[2] = abi.encode("barcode");
+        trait_types[3] = abi.encode("trxhash");
+        trait_types[4] = abi.encode("blockhash");
+        
         trait_values[0] = abi.encode(retailerName);
         trait_values[1] = abi.encode(retailerAddress);
         trait_values[2] = abi.encode(barcodeData);
-        trait_values[3] = abi.encode(btc_txid);
+        trait_values[3] = abi.encode(btc_txid);    
+        trait_values[4] = abi.encode(block_hash);
+
         trait_display[0] = abi.encode("");
         trait_display[1] = abi.encode("");
         trait_display[2] = abi.encode("");
         trait_display[3] = abi.encode("");
+        trait_display[4] = abi.encode("");
         _setValues(tokenId, key_token_attributes_trait_type, trait_types);
         _setValues(tokenId, key_token_attributes_trait_value, trait_values);
         _setValues(tokenId, key_token_attributes_display_type, trait_display);
  
-    
-        
         _tokenCount = _tokenCount + 1;
 
-        _safeMint(_msgSender(), tokenId, ""); 
+        _safeMint(recipient, tokenId, ""); 
     }
  
     

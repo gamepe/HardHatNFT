@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const NFT = await hre.ethers.getContractFactory("BARCODE_NFT");
+  const NFT = await hre.ethers.getContractFactory("PRODUCT_NFT");
   const nft = await NFT.deploy();
   await nft.deployed();
   console.log("NFT deployed to:", nft.address);

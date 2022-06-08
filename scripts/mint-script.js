@@ -3,6 +3,15 @@ web3 = require('web3')
 var ethers = require('ethers');
 const BigNumber = require("bignumber.js");
 async function main() {
+
+  const args = process.argv.slice(2)
+  if (args.length !== 2) {
+      console.error(`usage: ${process.argv[0]} ${process.argv[1]} <ipfsURI> <TOKENID>`)
+      process.exit(1)
+  }
+
+  console.log("g_uri:", process.argv[2]);
+  return;
   const NFT = await hre.ethers.getContractFactory("PRODUCT_NFT");
   const URI = "ipfs://bafyreiffb5oauvg5frdl4j2yxr66sqb326sv5qmlcqvj4nnmr7oqa7vtyi/metadata.json"
   const WALLET_ADDRESS = "0x1dA45683bd3ccd6f8308050d0D99c1ee7F761E5f"

@@ -1,7 +1,28 @@
 require("@nomiclabs/hardhat-waffle");
 require('dotenv').config();
+
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY;
+
+require("@nomiclabs/hardhat-web3");
+
+task("minter", "mint nft for barcode/qr")
+  .addParam("nftaddress", "nft address")
+  .addParam("tokenid", "nft tokenid")
+  .addParam("uri", "nft uri")
+  .setAction(async (taskArgs) => {
+   console.log("nftaddress=",taskArgs.nftaddress);
+   console.log("tokenid=",taskArgs.tokenid);
+   console.log("uri=",taskArgs.uri);
+   const NFT = await hre.ethers.getContractFactory("PRODUCT_NFT");
+   const URI = "ipfs://bafyreiffb5oauvg5frdl4j2yxr66sqb326sv5qmlcqvj4nnmr7oqa7vtyi/metadata.json"
+   const WALLET_ADDRESS = "0x1dA45683bd3ccd6f8308050d0D99c1ee7F761E5f"
+   const CONTRACT_ADDRESS = "0xD3a41C60752f4F359a19f36770fB5F91108bb666"
+   token_id =ethers.BigNumber.from(taskArgs.tokenid)
+   const contract = NFT.attach(CONTRACT_ADDRESS);
+   await contract.mint(WALLET_ADDRESS, token_id,URI);
+   console.log("NFT minted:", contract);
+  });
 
 module.exports = {
   defaultNetwork: "matic",

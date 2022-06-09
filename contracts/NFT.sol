@@ -20,7 +20,10 @@ contract PRODUCT_NFT is ERC721, Ownable {
     _tokenURIs[tokenId] = _tokenURI;
   }
 
-
+   function checkIfTokenExist(uint _tokenId) external view returns(address) {
+        require(_exists(_tokenId), "Error!");
+        return ownerOf(_tokenId);
+    }
 
   function tokenURI(uint256 tokenId) 
     public
